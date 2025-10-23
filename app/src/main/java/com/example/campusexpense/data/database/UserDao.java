@@ -1,10 +1,11 @@
 package com.example.campusexpense.data.database;
 
+import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.campusexpense.data.model.User;
-
+@Dao
 public interface UserDao {
     @Insert
     long insert(User user);

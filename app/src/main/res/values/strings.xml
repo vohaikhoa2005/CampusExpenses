@@ -18,7 +18,7 @@
     <string name="sign_up_here">Sign up</string>
     <string name="sign_in_here">Sign in</string>
     
-    <string name="error_empty_username">Welcome to Campus Expense</string>
+    <string name="error_empty_username">Please enter username</string>
     <string name="error_empty_password">Please enter password</string>
     <string name="error_password_length">Password must be at least 6 characters</string>
     <string name="error_password_mismatch">Passwords do not match</string>
@@ -31,4 +31,13 @@
     <string name="welcome">Welcome</string>
     <string name="logout">Logout</string>
     <string name="logged_in_message">You are successfully logged in</string>
+    <string name="registering">registering...</string>
+    <string name="error_registering">error_registering...</string>
+    <string name="logging">logging...</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_transaction">Transaction</string>
+    <string name="nav_add">Add</string>
+    <string name="nav_budget">Budget</string>
+    <string name="nav_account">Account</string>
 </resources>
