@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.campusexpense.R;
+import com.example.campusexpense.data.database.AppDatabase;
 import com.example.campusexpense.data.database.UserDao;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -40,5 +41,41 @@ public class RegisterActivity extends AppCompatActivity {
 
         loginText = findViewById(R.id.loginText);
         loginText.setOnClickListener(v -> finish());
+
+        AppDatabase database = AppDatabase.getInstance(this);
+        userDao = database.userDao();
+        registerButton.setOnClickListener(v -> register());
+
+    }
+
+    private void register() {
+        String username = usernameInput.getText().toString().trim();
+        String password = passwordInput.getText().toString();
+        String confirmPassword = confirmPasswordInput.getText().toString();
+
+        usernameLayout.setError(null);
+        passwordLayout.setError(null);
+        confirmPasswordLayout.setError(null);
+
+        if (username.isEmpty()) {
+            usernameLayout.setError(getString(R.string.error_empty_username));
+            return;
+        }
+
+
+        if (password.isEmpty()) {
+            passwordLayout.setError(getString(R.string.error_empty_password));
+            return;
+        }
+
+        if (!confirmPassword.isEmpty()) {
+            confirmPasswordLayout.setError(getString(R.string.error_password_mismatch));
+            return;
+        }
+        registerButton.setEnabled(false);`
+        registerButton.setText(R.string.registering);
+
+
+
     }
 }
