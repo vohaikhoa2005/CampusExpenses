@@ -6,14 +6,23 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.example.campusexpense.data.model.Budget;
+import com.example.campusexpense.data.model.Category;
+import com.example.campusexpense.data.model.Expense;
 import com.example.campusexpense.data.model.User;
 
-@Database(entities = {User.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, Category.class, Budget.class, Expense.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
     private static final String DATABASE_NAME = "campus_expense_db";
 
     public abstract UserDao userDao();
+    public abstract CategoryDao categoryDao();
+    public abstract BudgetDao budgetDao();
+    public abstract ExpenseDao expenseDao();
+
+
+
 
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {
