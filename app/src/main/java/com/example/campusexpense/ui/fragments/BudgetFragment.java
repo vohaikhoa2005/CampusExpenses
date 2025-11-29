@@ -3,6 +3,7 @@ package com.example.campusexpense.ui.fragments;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,6 +157,97 @@ public class BudgetFragment extends Fragment {
 
 
     private void showEditDialog(Budget budget) {
+
+            categoryList.clear();
+            categoryList.addAll(categoryDao.getAll());
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_budget, null);
+
+            Spinner categorySpinner = dialogView.findViewById(R.id.categorySpinner);
+            TextInputEditText amountInput = dialogView.findViewById(R.id.amountInput);
+            Spinner periodSpinner = dialogView.findViewById(R.id.periodSpinner);
+            Button saveButton = dialogView.findViewById(R.id.saveButton);
+            Button cancelButton = dialogView.findViewById(R.id.cancelButton);
+
+            List<String> categoryNameList = new ArrayList<>();
+            for (Category cat : categoryList) {
+                categoryNameList.add(cat.getName());
+            }
+
+            ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_item, categoryNameList);
+            categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            categorySpinner.setAdapter(categoryAdapter);
+
+            Category category = categoryDao.getById(budget.getCategoryId());
+            if (category != null) {
+                int categoryIndex = categoryList.indexOf(category);
+                if (categoryIndex >= 0) {
+                    categorySpinner.setSelection(categoryIndex);
+                }
+            }
+            categorySpinner.setEnabled(false);
+
+            amountInput.setText(String.valueOf(budget.getAmount()));
+
+            String[] periods = {"Monthly", "Weekly"};
+            ArrayAdapter<String> periodAdapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_item, periods);
+            periodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            periodSpinner.setAdapter(periodAdapter);
+
+            int periodIndex = -1;
+            for (int i = 0; i < periods.length; i++) {
+                if (periods[i].equals(budget.getPeriod())) {
+                    periodIndex = i;
+                    break;
+                }
+            }
+            if (periodIndex >= 0) {
+                periodSpinner.setSelection(periodIndex);
+            }
+
+            builder.setView(dialogView);
+            AlertDialog dialog = builder.create();
+
+            saveButton.setOnClickListener(v -> {
+                String amountStr = amountInput.getText().toString().trim();
+                int periodPosition = periodSpinner.getSelectedItemPosition();
+
+                if (TextUtils.isEmpty(amountStr)) {
+                    Toast.makeText(requireContext(), "Please enter amount", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (periodPosition < 0 || periodPosition >= periods.length) {
+                    Toast.makeText(requireContext(), "Please select period", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                double amount;
+                try {
+                    amount = Double.parseDouble(amountStr);
+                    if (amount <= 0) {
+                        Toast.makeText(requireContext(), "Amount must be greater than 0", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(requireContext(), "Invalid amount", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                budget.setAmount(amount);
+                budget.setPeriod(periods[periodPosition]);
+                budgetDao.update(budget);
+                refreshList();
+                dialog.dismiss();
+                Toast.makeText(requireContext(), "Budget updated successfully", Toast.LENGTH_SHORT).show();
+            });
+
+            cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+            dialog.show();
 
     }
 
